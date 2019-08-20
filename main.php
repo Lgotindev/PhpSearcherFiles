@@ -2,28 +2,37 @@
 
 namespace Main;
 
-function findFile(string $dirPath = "datafiles/", string $findFile = ".ixt")
+function findFiles(string $dirPath = "datafiles/", array $findFile = ["ixt"])
 {
-    $result = [];
     $fileList = [];
-    if ($currentDir = opendir($dirPath)) {
-        while ($file = readdir($currentDir)) {
-            if (strpos($file, $findFile) === strlen($file) - strlen($findFile)) {
-                $fileList[] = $file;
+    $allFile = scandir($dirPath);
+    foreach($allFile as $item) {
+        $exp = explode('.', $item);
+        if (count($exp) > 1) {
+            if (in_array($exp[1], $findFile)) {
+                $fileList[] = $item;
             }
         }
     }
-    closedir($currentDir);
     asort($fileList, SORT_STRING);
+
+    $result = [];
     foreach ($fileList as $word) {
-        $fullName = explode('.', $word);
-        if ((preg_match("/[a-zA-Z0-9]/", $fullName[0]))) {
-            $result[] = $fullName[0] . "{$findFile}";
+        $exp = explode('.', $word);
+        if ((preg_match("/[a-zA-Z0-9]/", $exp[0]))) {
+            $result[] = $exp[0] . "." . $exp[1];
         }
     }
     return $result;
 }
 
-print_r(findFile());
+print_r(findFiles());
 
+/*
+
+$fileList = array_filter(, function($findFile, $file) {
+    $Expansion = explode('.', $file);
+    return in_array($Expansion[1], $findFile);
+});
+*/
 
