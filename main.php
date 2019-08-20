@@ -2,10 +2,21 @@
 
 namespace Main;
 
-require_once 'src/SearchFiles.php';
+function searchFile(string $path = "datafiles/", string $findFile = ".ixt")
+{
+    $fileList = [];
+    if ($currentDir = opendir($path)) {
+        while ($file = readdir($currentDir)) {
+            if (strpos($file, $findFile) === strlen($file) - strlen($findFile)) {
+                $fileList[] = $file;
+            }
+        }
+        closedir($currentDir);
+        asort($fileList, SORT_STRING);
+    }
+    return $fileList;
+}
 
-use src\SearchFiles\SearchFiles;
+print_r(searchFile());
 
-$object = new SearchFiles("",".ixt");
 
-print_r($object->searchFile());
