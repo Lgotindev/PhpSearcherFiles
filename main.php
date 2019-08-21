@@ -2,37 +2,17 @@
 
 namespace Main;
 
-function findFiles(string $dirPath = "datafiles/", array $findFile = ["ixt"])
+function findFiles(string $dirPath = "datafiles/", array $validExtensions = ["ixt"])
 {
-    $fileList = [];
-    $allFile = scandir($dirPath);
-    foreach($allFile as $item) {
-        $exp = explode('.', $item);
-        if (count($exp) > 1) {
-            if (in_array($exp[1], $findFile)) {
-                $fileList[] = $item;
-            }
-        }
-    }
-    asort($fileList, SORT_STRING);
+    $filesNames = scandir($dirPath);
 
-    $result = [];
-    foreach ($fileList as $word) {
-        $exp = explode('.', $word);
-        if ((preg_match("/[a-zA-Z0-9]/", $exp[0]))) {
-            $result[] = $exp[0] . "." . $exp[1];
-        }
-    }
-    return $result;
+    $fileList = array_filter($filesNames, function($file) use ($validExtensions) {
+        $extension = pathinfo($file, PATHINFO_EXTENSION);
+        $fileName = pathinfo($file, PATHINFO_FILENAME);
+            return in_array($extension, $validExtensions) && preg_match("/[a-zA-Z0-9]/", $fileName);
+    });
+
+    return array_values($fileList);
 }
 
 print_r(findFiles());
-
-/*
-
-$fileList = array_filter(, function($findFile, $file) {
-    $Expansion = explode('.', $file);
-    return in_array($Expansion[1], $findFile);
-});
-*/
-
